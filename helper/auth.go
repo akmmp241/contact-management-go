@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"encoding/base64"
 	"errors"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,4 +20,13 @@ func CompareHash(dbPassword, requestPassword string) error {
 		return errors.New("username and password not match")
 	}
 	return nil
+}
+
+func DecodeBase64(input string) (string, error) {
+	data, err := base64.StdEncoding.DecodeString(input)
+	if err != nil {
+		return "", errors.New("fail base64 decode")
+	}
+
+	return string(data), nil
 }

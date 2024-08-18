@@ -21,7 +21,13 @@ func NewAuthMiddleware(userRepository contracts.UserRepository, DB *sql.DB) *Aut
 
 func (h AuthMiddleware) ApiAuthMiddleware(next func(http.ResponseWriter, *http.Request, httprouter.Params)) func(http.ResponseWriter, *http.Request, httprouter.Params) {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		token := r.Header.Get("Authorization")
+		authorization := r.Header.Get("Authorization")
+
+		token, err := helper.DecodeBase64(authorization)
+		if err != nil {
+			panic(exception.NewUnauthorized("invalid token"))
+		}
+
 		authenticate := true
 
 		if token == "" {
