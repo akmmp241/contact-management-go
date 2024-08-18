@@ -54,6 +54,7 @@ func InitializedServer() *http.Server {
 		app.NewControllers,
 		middleware.NewAuthMiddleware,
 		app.NewRouter,
+		app.NewConfig,
 	)
 	return nil
 }

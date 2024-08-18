@@ -2,13 +2,23 @@ package app
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/golang-migrate/migrate/database/mysql"
 	"log"
 	"time"
 )
 
-func NewDB() *sql.DB {
-	db, err := sql.Open("mysql", "joko:akuanakhebat@tcp(localhost:3306)/contact_management_go")
+func NewDB(config *Config) *sql.DB {
+
+	DbUser := config.env.GetString("DB_USER")
+	DbPassword := config.env.GetString("DB_PASSWORD")
+	DbHost := config.env.GetString("DB_HOST")
+	DbPort := config.env.GetString("DB_PORT")
+	DbDatabase := config.env.GetString("DB_DATABASE")
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", DbUser, DbPassword, DbHost, DbPort, DbDatabase)
+
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

@@ -23,7 +23,8 @@ import (
 
 func InitializedServer() *http.Server {
 	userRepositoryImpl := impl.NewUserRepositoryImpl()
-	db := app.NewDB()
+	config := app.NewConfig()
+	db := app.NewDB(config)
 	authMiddleware := middleware.NewAuthMiddleware(userRepositoryImpl, db)
 	validate := NewValidator()
 	userServiceImpl := impl2.NewUserServiceImpl(userRepositoryImpl, db, validate)
