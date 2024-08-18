@@ -10,7 +10,6 @@ import (
 	"database/sql"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type UserServiceImpl struct {
@@ -75,7 +74,7 @@ func (s *UserServiceImpl) Login(ctx context.Context, req dto.LoginRequest) *dto.
 		panic(exception.NewUnauthorized("wrong credentials"))
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+	err = helper.CompareHash(user.Password, req.Password)
 	if err != nil {
 		panic(exception.NewUnauthorized("wrong credentials"))
 	}
