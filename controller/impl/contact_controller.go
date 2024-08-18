@@ -2,9 +2,9 @@ package impl
 
 import (
 	"contact-management-restful/exception"
+	"contact-management-restful/helper"
 	"contact-management-restful/models/dto"
 	"contact-management-restful/services/contracts"
-	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"strconv"
@@ -20,10 +20,7 @@ func NewContactControllerImpl(contactService contracts.ContactService) *ContactC
 
 func (c ContactControllerImpl) Create(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var createContactRequest dto.CreateContactRequest
-	err := json.NewDecoder(r.Body).Decode(&createContactRequest)
-	if err != nil {
-		panic(exception.NewBadRequest("invalid request body. Content-Type must be application/json"))
-	}
+	helper.ReadFromRequestBody(r, &createContactRequest)
 
 	createContactResponse := c.ContactService.Create(r.Context(), createContactRequest)
 
@@ -33,10 +30,7 @@ func (c ContactControllerImpl) Create(w http.ResponseWriter, r *http.Request, _ 
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(webResponse); err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }
 
 func (c ContactControllerImpl) List(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -48,18 +42,12 @@ func (c ContactControllerImpl) List(w http.ResponseWriter, r *http.Request, _ ht
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(webResponse); err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }
 
 func (c ContactControllerImpl) Update(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	var updateContactRequest dto.UpdateContactRequest
-	err := json.NewDecoder(r.Body).Decode(&updateContactRequest)
-	if err != nil {
-		panic(exception.NewBadRequest("invalid request body. Content-Type must be application/json"))
-	}
+	helper.ReadFromRequestBody(r, &updateContactRequest)
 
 	idFromParam := params.ByName("id")
 	id, err := strconv.Atoi(idFromParam)
@@ -75,10 +63,7 @@ func (c ContactControllerImpl) Update(w http.ResponseWriter, r *http.Request, pa
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(webResponse); err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }
 
 func (c ContactControllerImpl) Get(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -96,10 +81,7 @@ func (c ContactControllerImpl) Get(w http.ResponseWriter, r *http.Request, param
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(webResponse); err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }
 
 func (c ContactControllerImpl) Delete(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -117,8 +99,5 @@ func (c ContactControllerImpl) Delete(w http.ResponseWriter, r *http.Request, pa
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(webResponse); err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }

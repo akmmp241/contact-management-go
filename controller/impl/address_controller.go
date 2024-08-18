@@ -2,9 +2,9 @@ package impl
 
 import (
 	"contact-management-restful/exception"
+	"contact-management-restful/helper"
 	"contact-management-restful/models/dto"
 	"contact-management-restful/services/contracts"
-	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"strconv"
@@ -20,10 +20,7 @@ func NewAddressControllerImpl(service contracts.AddressService) *AddressControll
 
 func (c AddressControllerImpl) Create(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	var req dto.AddressDTO
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		panic(exception.NewBadRequest("invalid request body."))
-	}
+	helper.ReadFromRequestBody(r, &req)
 
 	contactId := params.ByName("contactId")
 	id, err := strconv.Atoi(contactId)
@@ -38,19 +35,13 @@ func (c AddressControllerImpl) Create(w http.ResponseWriter, r *http.Request, pa
 		Data:    addressDTO,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(webResponse); err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }
 
 func (c AddressControllerImpl) Update(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	var addressDTO dto.AddressDTO
-	err := json.NewDecoder(r.Body).Decode(&addressDTO)
-	if err != nil {
-		panic(exception.NewBadRequest("invalid request body. Content-Type must be application/json"))
-	}
+	helper.ReadFromRequestBody(r, &addressDTO)
 
 	contactParam := params.ByName("contactId")
 	contactId, err := strconv.Atoi(contactParam)
@@ -71,11 +62,8 @@ func (c AddressControllerImpl) Update(w http.ResponseWriter, r *http.Request, pa
 		Data:    updateAddressResponse,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(webResponse); err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }
 
 func (c AddressControllerImpl) Get(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -98,11 +86,8 @@ func (c AddressControllerImpl) Get(w http.ResponseWriter, r *http.Request, param
 		Data:    getAddressResponse,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(webResponse); err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }
 
 func (c AddressControllerImpl) List(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -119,11 +104,8 @@ func (c AddressControllerImpl) List(w http.ResponseWriter, r *http.Request, para
 		Data:    listAddressResponse,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(webResponse); err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }
 
 func (c AddressControllerImpl) Delete(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -146,9 +128,6 @@ func (c AddressControllerImpl) Delete(w http.ResponseWriter, r *http.Request, pa
 		Data:    true,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(webResponse); err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }

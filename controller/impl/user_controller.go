@@ -1,11 +1,10 @@
 package impl
 
 import (
-	"contact-management-restful/exception"
+	"contact-management-restful/helper"
 	"contact-management-restful/models/domains"
 	"contact-management-restful/models/dto"
 	servicesContracts "contact-management-restful/services/contracts"
-	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -22,10 +21,7 @@ func NewUserController(userService servicesContracts.UserService) *UserControlle
 
 func (c *UserControllerImpl) Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var registerRequest dto.RegisterRequest
-	err := json.NewDecoder(r.Body).Decode(&registerRequest)
-	if err != nil {
-		panic(exception.NewBadRequest("invalid request body"))
-	}
+	helper.ReadFromRequestBody(r, &registerRequest)
 
 	registerResponse := c.UserService.Register(r.Context(), registerRequest)
 
@@ -34,20 +30,13 @@ func (c *UserControllerImpl) Register(w http.ResponseWriter, r *http.Request, _ 
 		Data:    registerResponse,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(w).Encode(webResponse)
-	if err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }
 
 func (c *UserControllerImpl) Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var loginRequest dto.LoginRequest
-	err := json.NewDecoder(r.Body).Decode(&loginRequest)
-	if err != nil {
-		panic(exception.NewBadRequest("invalid request body"))
-	}
+	helper.ReadFromRequestBody(r, &loginRequest)
 
 	loginResponse := c.UserService.Login(r.Context(), loginRequest)
 
@@ -56,12 +45,8 @@ func (c *UserControllerImpl) Login(w http.ResponseWriter, r *http.Request, _ htt
 		Data:    loginResponse,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(w).Encode(webResponse)
-	if err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }
 
 func (c *UserControllerImpl) Current(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -76,20 +61,13 @@ func (c *UserControllerImpl) Current(w http.ResponseWriter, r *http.Request, _ h
 		},
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	err := json.NewEncoder(w).Encode(webResponse)
-	if err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }
 
 func (c *UserControllerImpl) Update(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var updateRequest dto.UpdateUserRequest
-	err := json.NewDecoder(r.Body).Decode(&updateRequest)
-	if err != nil {
-		panic(exception.NewBadRequest("invalid request body"))
-	}
+	helper.ReadFromRequestBody(r, &updateRequest)
 
 	updateResponse := c.UserService.Update(r.Context(), updateRequest)
 
@@ -98,12 +76,8 @@ func (c *UserControllerImpl) Update(w http.ResponseWriter, r *http.Request, _ ht
 		Data:    updateResponse,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(w).Encode(webResponse)
-	if err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }
 
 func (c *UserControllerImpl) Logout(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -114,10 +88,6 @@ func (c *UserControllerImpl) Logout(w http.ResponseWriter, r *http.Request, _ ht
 		Data:    true,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	err := json.NewEncoder(w).Encode(webResponse)
-	if err != nil {
-		panic(err)
-	}
+	helper.WriteToResponse(w, &webResponse)
 }
