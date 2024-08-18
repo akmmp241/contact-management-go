@@ -9,6 +9,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -39,7 +40,7 @@ func (s *UserServiceImpl) Register(ctx context.Context, req dto.RegisterRequest)
 		panic(exception.NewUnauthorized("Username already registered"))
 	}
 
-	token := "123jnjndasjkn123jnjska"
+	token := uuid.NewString()
 	hashedPassword, err := helper.HashedPassword(req.Password)
 	if err != nil {
 		panic(err)
@@ -79,7 +80,7 @@ func (s *UserServiceImpl) Login(ctx context.Context, req dto.LoginRequest) *dto.
 		panic(exception.NewUnauthorized("wrong credentials"))
 	}
 
-	token := "njkn213nkasndkn"
+	token := uuid.NewString()
 	user.Token = token
 	user = s.UserRepository.Update(ctx, tx, user)
 
